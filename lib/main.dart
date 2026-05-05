@@ -1,141 +1,167 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
-import 'package:flutter/foundation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final cameras = await availableCameras();
-  final front = cameras.firstWhere((c) => c.lensDirection == CameraLensDirection.front, orElse: () => cameras.first);
-  runApp(MaterialApp(debugShowCheckedModeBanner: false, theme: ThemeData.dark(), home: PoseDetectorScreen(camera: front)));
+  runApp(SwingHopApp(cameras: cameras));
 }
 
-class PoseDetectorScreen extends StatefulWidget {
-  final CameraDescription camera;
-  const PoseDetectorScreen({super.key, required this.camera});
+class SwingHopApp extends StatelessWidget {
+  final List<CameraDescription> cameras;
+  const SwingHopApp({super.key, required this.cameras});
+
   @override
-  State<PoseDetectorScreen> createState() => _PoseDetectorScreenState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(brightness: Brightness.dark, primaryColor: Colors.greenAccent),
+      home: MainNavigation(cameras: cameras),
+    );
+  }
 }
 
-class _PoseDetectorScreenState extends State<PoseDetectorScreen> {
+class MainNavigation extends StatefulWidget {
+  final List<CameraDescription> cameras;
+  const MainNavigation({super.key, required this.cameras});
+  @override
+  State<MainNavigation> createState() => _MainNavigationState();
+}
+
+class _MainNavigationState extends State<MainNavigation> {
+  int _selectedIndex = 1;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _selectedIndex == 1 
+          ? TrainingMenu(cameras: widget.cameras) 
+          : Center(child: Text(_selectedIndex == 0 ? "Profil" : "Scores")),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        selectedItemColor: Colors.greenAccent,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+          BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: 'Jouer'),
+          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: 'Scores'),
+        ],
+      ),
+    );
+  }
+}
+
+class TrainingMenu extends StatelessWidget {
+  final List<CameraDescription> cameras;
+  const TrainingMenu({super.key, required this.cameras});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("SwingHop", style: TextStyle(fontSize: 42, fontWeight: FontWeight.bold, color: Colors.greenAccent)),
+          const SizedBox(height: 50),
+          GestureDetector(
+            onTap: () {
+              final front = cameras.firstWhere((c) => c.lensDirection == CameraLensDirection.front, orElse: () => cameras.first);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PoseDetectorView(camera: front)));
+            },
+            child: Container(
+              height: 160, width: 160,
+              decoration: const BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [Colors.greenAccent, Colors.teal])),
+              child: const Icon(Icons.play_arrow_rounded, size: 80, color: Colors.black),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PoseDetectorView extends StatefulWidget {
+  final CameraDescription camera;
+  const PoseDetectorView({super.key, required this.camera});
+  @override
+  State<PoseDetectorView> createState() => _PoseDetectorViewState();
+}
+
+class _PoseDetectorViewState extends State<PoseDetectorView> {
   CameraController? _controller;
-  final PoseDetector _poseDetector = PoseDetector(options: PoseDetectorOptions());
+  final PoseDetector _poseDetector = PoseDetector(options: PoseDetectorOptions(mode: PoseDetectionMode.stream));
   List<Pose> _poses = [];
   bool _isBusy = false;
-
-  // LOGIQUE DU SAUT OPTIMISÉE
-  int _jumpCount = 0;
+  int _jumps = 0;
   bool _isUp = false;
-  double? _baselineY; 
-  final double _threshold = 20.0; // Seuil réduit pour détecter de petits sauts
+  double? _baseY;
 
   @override
   void initState() {
     super.initState();
-    _init();
+    _startCam();
   }
 
-  Future<void> _init() async {
-    // On utilise ResolutionPreset.low pour booster la vitesse de l'IA
-    _controller = CameraController(widget.camera, ResolutionPreset.low, enableAudio: false, imageFormatGroup: ImageFormatGroup.nv21);
-    await _controller!.initialize();
+  Future<void> _startCam() async {
+    // Utilisation d'une résolution basse pour booster la vitesse de l'IA
+    _controller = CameraController(widget.camera, ResolutionPreset.low, enableAudio: false, imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.nv21 : ImageFormatGroup.bgra8888);
     
-    // On démarre le flux d'images en direct (bien plus rapide que takePicture)
-    _controller!.startImageStream((CameraImage image) {
-      if (_isBusy) return;
-      _processCameraImage(image);
-    });
-
+    await _controller!.initialize();
+    _controller!.startImageStream(_processImage);
     if (mounted) setState(() {});
   }
 
-  Future<void> _processCameraImage(CameraImage image) async {
-    setState(() => _isBusy = true);
+  void _processImage(CameraImage image) async {
+    if (_isBusy) return;
+    _isBusy = true;
 
-    final inputImage = _inputImageFromCameraImage(image);
-    if (inputImage == null) {
-      setState(() => _isBusy = false);
-      return;
-    }
+    final metadata = InputImageMetadata(
+      size: Size(image.width.toDouble(), image.height.toDouble()),
+      // TEST : Si les points n'apparaissent pas, change rotation270deg en rotation90deg
+      rotation: InputImageRotation.rotation270deg, 
+      format: InputImageFormat.nv21,
+      bytesPerRow: image.planes.first.bytesPerRow,
+    );
+
+    final inputImage = InputImage.fromBytes(
+      bytes: image.planes.first.bytes,
+      metadata: metadata,
+    );
 
     try {
       final poses = await _poseDetector.processImage(inputImage);
-      if (mounted && poses.isNotEmpty) {
-        _analyzeJump(poses.first);
+      if (mounted) {
+        if (poses.isNotEmpty) _processJump(poses.first);
         setState(() => _poses = poses);
       }
     } catch (e) {
-      print("Erreur IA: $e");
+      debugPrint("IA Error: $e");
+    } finally {
+      _isBusy = false;
     }
-
-    setState(() => _isBusy = false);
   }
 
-  void _analyzeJump(Pose pose) {
-    final leftHip = pose.landmarks[PoseLandmarkType.leftHip];
-    final rightHip = pose.landmarks[PoseLandmarkType.rightHip];
+  void _processJump(Pose pose) {
+    // On cible la hanche pour le saut
+    final hip = pose.landmarks[PoseLandmarkType.leftHip] ?? pose.landmarks[PoseLandmarkType.rightHip];
+    if (hip != null) {
+      _baseY ??= hip.y;
+      _baseY = (_baseY! * 0.95) + (hip.y * 0.05);
 
-    if (leftHip != null && rightHip != null) {
-      double currentY = (leftHip.y + rightHip.y) / 2;
-      
-      // On stabilise la ligne de base (moyenne glissante simple)
-      if (_baselineY == null) {
-        _baselineY = currentY;
-      } else {
-        // On réajuste doucement la base pour s'adapter si tu te déplaces
-        _baselineY = (_baselineY! * 0.95) + (currentY * 0.05);
-      }
-
-      // Détection de la montée (Y diminue quand on monte)
-      if (currentY < (_baselineY! - _threshold) && !_isUp) {
+      // Si le corps monte (Y diminue)
+      if (hip.y < (_baseY! - 20) && !_isUp) {
         _isUp = true;
-      } 
-      // Détection de la descente
-      else if (currentY > (_baselineY! - 5) && _isUp) {
-        setState(() {
-          _isUp = false;
-          _jumpCount++;
-        });
+      } else if (hip.y > (_baseY! - 5) && _isUp) {
+        _isUp = false;
+        setState(() => _jumps++);
       }
     }
-  }
-
-  // Helper indispensable pour convertir le flux d'images mobile vers l'IA
-  InputImage? _inputImageFromCameraImage(CameraImage image) {
-    final sensorOrientation = widget.camera.sensorOrientation;
-    InputImageRotation? rotation;
-    if (Platform.isAndroid) {
-      var rotations = {
-        0: InputImageRotation.rotation0deg,
-        90: InputImageRotation.rotation90deg,
-        180: InputImageRotation.rotation180deg,
-        270: InputImageRotation.rotation270deg,
-      };
-      rotation = rotations[sensorOrientation];
-    }
-    
-    if (rotation == null) return null;
-
-    final format = InputImageFormatValue.fromRawValue(image.format.raw);
-    if (format == null || image.planes.length != 1) return null;
-
-    final plane = image.planes.first;
-
-    return InputImage.fromBytes(
-      bytes: plane.bytes,
-      metadata: InputImageMetadata(
-        size: Size(image.width.toDouble(), image.height.toDouble()),
-        rotation: rotation,
-        format: format,
-        bytesPerRow: plane.bytesPerRow,
-      ),
-    );
   }
 
   @override
   void dispose() {
-    _controller?.stopImageStream();
     _controller?.dispose();
     _poseDetector.close();
     super.dispose();
@@ -144,35 +170,45 @@ class _PoseDetectorScreenState extends State<PoseDetectorScreen> {
   @override
   Widget build(BuildContext context) {
     if (_controller == null || !_controller!.value.isInitialized) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-
+    
+    // Calcul du ratio pour que les points tombent pile sur la vidéo
+    final size = MediaQuery.of(context).size;
+    
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Stack(
         fit: StackFit.expand,
         children: [
           CameraPreview(_controller!),
           if (_poses.isNotEmpty)
-            CustomPaint(painter: PosePainter(_poses, _controller!.value.previewSize!)),
-          
-          Positioned(
-            top: 60, left: 0, right: 0,
+            CustomPaint(painter: PosePainter(_poses, _controller!.value.previewSize!, size)),
+          SafeArea(
             child: Column(
               children: [
-                Text("$_jumpCount", style: const TextStyle(fontSize: 120, fontWeight: FontWeight.w900, color: Colors.greenAccent)),
-                const Text("SAUTS DETECTÉS", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                const SizedBox(height: 20),
+                Text("$_jumps", style: const TextStyle(fontSize: 100, fontWeight: FontWeight.bold, color: Colors.greenAccent)),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      FloatingActionButton(
+                        onPressed: () => Navigator.pop(context),
+                        backgroundColor: Colors.white24,
+                        child: const Icon(Icons.close),
+                      ),
+                      FloatingActionButton(
+                        onPressed: () => setState(() { _jumps = 0; _baseY = null; }),
+                        backgroundColor: Colors.redAccent,
+                        child: const Icon(Icons.refresh),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
-          
-          if (_isUp)
-            Center(child: Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.green.withOpacity(0.5), shape: BoxShape.circle), child: const Icon(Icons.arrow_upward, size: 100, color: Colors.white))),
-
-          Positioned(
-            bottom: 40, right: 20,
-            child: FloatingActionButton(
-              onPressed: () => setState(() { _jumpCount = 0; _baselineY = null; }),
-              child: const Icon(Icons.refresh),
-            ),
-          )
         ],
       ),
     );
@@ -181,25 +217,31 @@ class _PoseDetectorScreenState extends State<PoseDetectorScreen> {
 
 class PosePainter extends CustomPainter {
   final List<Pose> poses;
-  final Size previewSize;
-  PosePainter(this.poses, this.previewSize);
+  final Size imageSize; // Taille du flux caméra
+  final Size widgetSize; // Taille de l'écran
+
+  PosePainter(this.poses, this.imageSize, this.widgetSize);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.greenAccent..strokeWidth = 4..style = PaintingStyle.fill;
-    for (final pose in poses) {
-      pose.landmarks.forEach((_, landmark) {
-        final double x = size.width - (landmark.x * size.width / previewSize.height);
-        final double y = landmark.y * size.height / previewSize.width;
-        canvas.drawCircle(Offset(x, y), 4, paint);
+    final paint = Paint()..color = Colors.greenAccent..strokeWidth = 4;
+
+    for (var pose in poses) {
+      // Sur Android en portrait, largeur et hauteur sont inversées dans le flux
+      final double scaleX = widgetSize.width / imageSize.height;
+      final double scaleY = widgetSize.height / imageSize.width;
+
+      pose.landmarks.forEach((_, point) {
+        // Inversion horizontale pour l'effet miroir de la caméra frontale
+        canvas.drawCircle(
+          Offset(widgetSize.width - (point.x * scaleX), point.y * scaleY),
+          5,
+          paint,
+        );
       });
     }
   }
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
 
-// Petit fix pour le format d'image Android
-class Platform {
-  static bool get isAndroid => defaultTargetPlatform == TargetPlatform.android;
+  @override
+  bool shouldRepaint(PosePainter old) => true;
 }
