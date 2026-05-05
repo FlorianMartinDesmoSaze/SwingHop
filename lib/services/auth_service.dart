@@ -17,6 +17,16 @@ class AuthService {
     return userCredential.user;
   }
 
+  /// Lie le compte anonyme actuel avec un Email et un Mot de passe.
+  Future<User?> linkWithEmailAndPassword(String email, String password) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception("Aucun utilisateur connecté.");
+    
+    final credential = EmailAuthProvider.credential(email: email, password: password);
+    final userCredential = await user.linkWithCredential(credential);
+    return userCredential.user;
+  }
+
   /// Déconnecte l'utilisateur (utile en debug, bien que l'auth anonyme soit censée persister)
   Future<void> signOut() async {
     await _auth.signOut();

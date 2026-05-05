@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'pose_detector_screen.dart';
 
 /// Écran d'accueil "Jouer" : affiche le titre et le bouton de démarrage.
@@ -16,12 +17,23 @@ class TrainingMenu extends StatelessWidget {
           const Text(
             'SwingHop',
             style: TextStyle(
-              fontSize: 42,
+              fontSize: 54,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              letterSpacing: 2,
+            ),
+          ).animate().fade(duration: 500.ms).slideY(begin: -0.2),
+          const SizedBox(height: 10),
+          const Text(
+            'MODE LIBRE',
+            style: TextStyle(
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.greenAccent,
+              letterSpacing: 4,
             ),
-          ),
-          const SizedBox(height: 50),
+          ).animate().fade(delay: 200.ms).slideY(begin: -0.2),
+          const SizedBox(height: 60),
           GestureDetector(
             onTap: () {
               final front = cameras.firstWhere(
@@ -36,21 +48,30 @@ class TrainingMenu extends StatelessWidget {
               );
             },
             child: Container(
-              height: 160,
-              width: 160,
-              decoration: const BoxDecoration(
+              height: 180,
+              width: 180,
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [Colors.greenAccent, Colors.teal],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.greenAccent.withOpacity(0.4),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
+                ],
               ),
               child: const Icon(
                 Icons.play_arrow_rounded,
-                size: 80,
+                size: 100,
                 color: Colors.black,
               ),
             ),
-          ),
+          ).animate().scale(delay: 400.ms, duration: 500.ms, curve: Curves.easeOutBack),
         ],
       ),
     );

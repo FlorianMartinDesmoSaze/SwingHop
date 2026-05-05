@@ -6,6 +6,9 @@ import 'screens/profile_screen.dart';
 import 'screens/setup_profile_screen.dart';
 import 'screens/leaderboard_screen.dart';
 import 'screens/duel_menu_screen.dart';
+import 'screens/settings_screen.dart';
+
+import 'package:google_fonts/google_fonts.dart';
 
 /// Widget racine de l'application SwingHop.
 class SwingHopApp extends StatelessWidget {
@@ -20,8 +23,28 @@ class SwingHopApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.greenAccent,
-        colorScheme: const ColorScheme.dark(primary: Colors.greenAccent),
-        scaffoldBackgroundColor: Colors.black,
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.greenAccent,
+          secondary: Colors.amberAccent,
+          surface: Color(0xFF1E293B), // Slate 800
+        ),
+        scaffoldBackgroundColor: const Color(0xFF0F172A), // Slate 900
+        textTheme: GoogleFonts.outfitTextTheme(Theme.of(context).textTheme).apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF0F172A),
+          elevation: 0,
+          centerTitle: true,
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Color(0xFF0F172A),
+          selectedItemColor: Colors.greenAccent,
+          unselectedItemColor: Colors.white54,
+          type: BottomNavigationBarType.fixed,
+          elevation: 10,
+        ),
       ),
       home: AuthWrapper(cameras: cameras),
     );
@@ -84,6 +107,7 @@ class _MainNavigationState extends State<MainNavigation> {
           BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: 'Libre'),
           BottomNavigationBarItem(icon: Icon(Icons.bolt), label: 'Duels'),
           BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: 'Classement'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Réglages'),
         ],
       ),
     );
@@ -99,6 +123,8 @@ class _MainNavigationState extends State<MainNavigation> {
         return DuelMenuScreen(cameras: widget.cameras);
       case 3:
         return const LeaderboardScreen();
+      case 4:
+        return const SettingsScreen();
       default:
         return const SizedBox.shrink();
     }

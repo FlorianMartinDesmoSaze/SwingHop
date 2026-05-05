@@ -1,4 +1,5 @@
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'audio_haptic_service.dart';
 
 /// Seuil de montée : le corps doit monter de X pixels pour déclencher _isUp
 const double kJumpUpThreshold = 20.0;
@@ -36,6 +37,11 @@ class JumpDetector {
     else if (hip.y > (_baseY! - kJumpDownThreshold) && _isUp) {
       _isUp = false;
       _jumps++;
+      
+      // Joue le son et la vibration
+      AudioHapticService().playJumpSound();
+      AudioHapticService().playJumpHaptic();
+      
       return true; // Nouveau saut détecté
     }
 

@@ -31,6 +31,15 @@ class FirestoreService {
     return null;
   }
 
+  /// Met à jour le pseudo d'un joueur
+  Future<void> updatePseudo(String uid, String newPseudo) async {
+    try {
+      await _db.collection('users').doc(uid).update({'pseudo': newPseudo});
+    } catch (e) {
+      debugPrint("Erreur updatePseudo: $e");
+    }
+  }
+
   /// Met à jour les points et le compte de victoires/défaites d'un joueur
   Future<void> updatePlayerStats(String uid, {required int pointsToAdd, bool? isDuelWin}) async {
     try {
@@ -155,6 +164,102 @@ class FirestoreService {
 
     } catch (e) {
       debugPrint("Erreur resolveDuel: $e");
+    }
+  }
+
+  /// Récupère l'historique des duels (terminés) d'un joueur
+  Future<List<DuelRecord>> getDuelHistory(String uid) async {
+    try {
+      final creatorQuery = await _db
+          .collection('duels')
+          .where('creatorUid', isEqualTo: uid)
+          .where('status', isEqualTo: 'completed')
+          .get();
+
+      final challengerQuery = await _db
+          .collection('duels')
+          .where('challengerUid', isEqualTo: uid)
+          .where('status', isEqualTo: 'completed')
+          .get();
+
+      final allDocs = [...creatorQuery.docs, ...challengerQuery.docs];
+      
+      // Éviter les doublons potentiels
+      final uniqueDocs = {for (var doc in allDocs) doc.id: doc}.values.toList();
+
+      final duels = uniqueDocs.map((doc) => DuelRecord.fromMap(doc.data(), doc.id)).toList();
+      
+      // Trier par date décroissante (plus récent en premier)
+      duels.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      
+      return duels;
+    } catch (e) {
+      debugPrint("Erreur getDuelHistory: $e");
+      return [];
+    }
+  }
+
+  // --- DEBUG & TESTS ---
+  
+  /// Génère des fausses données (joueurs, duels en attente, historique)
+  /// pour tester l'UI (classement, historique, confettis).
+  Future<void> generateMockData(String currentUid) async {
+    try {
+      debugPrint("Génération de fausses données en cours...");
+
+      // 1. Faux Joueurs
+      final fakeUsers = [
+        UserProfile(uid: "mock1", pseudo: "ShadowNinja", totalPoints: 1250, duelWins: 25, duelLosses: 5),
+        UserProfile(uid: "mock2", pseudo: "IronLegs", totalPoints: 850, duelWins: 15, duelLosses: 10),
+        UserProfile(uid: "mock3", pseudo: "HopMaster", totalPoints: 420, duelWins: 8, duelLosses: 2),
+      ];
+
+      for (var user in fakeUsers) {
+        await _db.collection('users').doc(user.uid).set(user.toMap());
+      }
+
+      // 2. Faux Duels en attente (défis que l'utilisateur actuel peut relever)
+      final pendingDuels = [
+        DuelRecord(creatorUid: "mock1", creatorPseudo: "ShadowNinja", creatorScore: 8),
+        DuelRecord(creatorUid: "mock2", creatorPseudo: "IronLegs", creatorScore: 3),
+        DuelRecord(creatorUid: "mock3", creatorPseudo: "HopMaster", creatorScore: 1),
+      ];
+
+      for (var duel in pendingDuels) {
+        await _db.collection('duels').add(duel.toMap());
+      }
+
+      // 3. Faux Historique (duels déjà complétés par l'utilisateur actuel)
+      final completedDuels = [
+        DuelRecord(
+          creatorUid: currentUid, 
+          creatorPseudo: "Moi", 
+          creatorScore: 12, 
+          challengerUid: "mock2", 
+          challengerPseudo: "IronLegs", 
+          challengerScore: 9, 
+          status: 'completed',
+          createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+        ),
+        DuelRecord(
+          creatorUid: "mock1", 
+          creatorPseudo: "ShadowNinja", 
+          creatorScore: 15, 
+          challengerUid: currentUid, 
+          challengerPseudo: "Moi", 
+          challengerScore: 10, 
+          status: 'completed',
+          createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        ),
+      ];
+
+      for (var duel in completedDuels) {
+        await _db.collection('duels').add(duel.toMap());
+      }
+
+      debugPrint("Fausses données générées avec succès !");
+    } catch (e) {
+      debugPrint("Erreur generateMockData: $e");
     }
   }
 }

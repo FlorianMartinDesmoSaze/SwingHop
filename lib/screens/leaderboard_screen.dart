@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../models/user_profile.dart';
 import '../services/firestore_service.dart';
 import '../widgets/rank_badge.dart';
@@ -42,10 +43,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     final currentUid = _authService.currentUser?.uid;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent, // Background from theme
       appBar: AppBar(
-        title: const Text('Classement Mondial', style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.black,
+        title: const Text('Classement Mondial', style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
       ),
@@ -57,38 +58,58 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               itemBuilder: (context, index) {
                 final player = _topPlayers[index];
                 final isMe = player.uid == currentUid;
+                
+                // Couleurs pour le Top 3
+                Color rankColor;
+                if (index == 0) {
+                  rankColor = const Color(0xFFFFD700); // Or
+                } else if (index == 1) rankColor = const Color(0xFFC0C0C0); // Argent
+                else if (index == 2) rankColor = const Color(0xFFCD7F32); // Bronze
+                else rankColor = Colors.white24;
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: isMe ? Colors.greenAccent.withValues(alpha: 0.1) : Colors.white10,
-                    borderRadius: BorderRadius.circular(16),
+                    color: isMe ? Colors.greenAccent.withOpacity(0.15) : const Color(0xFF1E293B).withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isMe ? Colors.greenAccent : Colors.transparent,
-                      width: isMe ? 2 : 0,
+                      color: isMe 
+                        ? Colors.greenAccent 
+                        : (index < 3 ? rankColor.withOpacity(0.5) : Colors.transparent),
+                      width: isMe || index < 3 ? 2 : 0,
                     ),
+                    boxShadow: [
+                      if (isMe)
+                        BoxShadow(color: Colors.greenAccent.withOpacity(0.2), blurRadius: 15, spreadRadius: 1)
+                      else if (index < 3)
+                        BoxShadow(color: rankColor.withOpacity(0.15), blurRadius: 10, spreadRadius: 1),
+                    ],
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     leading: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          '#${index + 1}',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: index < 3 ? Colors.amber : Colors.white54,
+                        Container(
+                          width: 40,
+                          alignment: Alignment.center,
+                          child: Text(
+                            '#${index + 1}',
+                            style: TextStyle(
+                              fontSize: index < 3 ? 22 : 18,
+                              fontWeight: FontWeight.w900,
+                              color: index < 3 ? rankColor : Colors.white54,
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 8),
                         RankBadge(rank: player.rank, size: 40),
                       ],
                     ),
                     title: Text(
                       player.pseudo + (isMe ? ' (Toi)' : ''),
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w800,
                         color: isMe ? Colors.greenAccent : Colors.white,
                         fontSize: 18,
                       ),
@@ -99,16 +120,16 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                       children: [
                         Text(
                           '${player.totalPoints} pts',
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.greenAccent, fontSize: 16),
+                          style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.greenAccent, fontSize: 18),
                         ),
                         Text(
                           '${player.duelWins} victoires',
-                          style: const TextStyle(color: Colors.white54, fontSize: 12),
+                          style: const TextStyle(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
                   ),
-                );
+                ).animate().fade(delay: Duration(milliseconds: 50 * index)).slideX(begin: 0.1);
               },
             ),
     );
