@@ -4,6 +4,9 @@ import 'package:camera/camera.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import '../services/jump_detector.dart';
 import '../widgets/pose_painter.dart';
+import '../models/session_record.dart';
+import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
 
 /// Écran principal de détection de pose et comptage de sauts en temps réel.
 class PoseDetectorScreen extends StatefulWidget {
@@ -20,9 +23,13 @@ class _PoseDetectorScreenState extends State<PoseDetectorScreen> {
     options: PoseDetectorOptions(mode: PoseDetectionMode.stream),
   );
   final JumpDetector _jumpDetector = JumpDetector();
+  
+  final _authService = AuthService();
+  final _firestoreService = FirestoreService();
 
   List<Pose> _poses = [];
   bool _isBusy = false;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -46,7 +53,7 @@ class _PoseDetectorScreenState extends State<PoseDetectorScreen> {
   }
 
   void _processImage(CameraImage image) async {
-    if (_isBusy) return;
+    if (_isBusy || _isSaving) return;
     _isBusy = true;
 
     final metadata = InputImageMetadata(
@@ -79,9 +86,45 @@ class _PoseDetectorScreenState extends State<PoseDetectorScreen> {
     }
   }
 
-  void _reset() {
+  Future<void> _saveCurrentSession() async {
+    final jumps = _jumpDetector.jumps;
+    if (jumps == 0) return; // Ne pas sauvegarder les sessions vides
+
+    final user = _authService.currentUser;
+    if (user == null) return;
+
+    setState(() => _isSaving = true);
+    
+    final record = SessionRecord(
+      date: DateTime.now(),
+      jumps: jumps,
+      pointsEarned: jumps, // 1 point par saut en mode libre
+      isDuel: false,
+    );
+
+    await _firestoreService.saveSession(user.uid, record);
+    
+    if (mounted) {
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Session sauvegardée : +$jumps points !', style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.greenAccent,
+          duration: const Duration(seconds: 2),
+        )
+      );
+    }
+  }
+
+  void _reset() async {
+    await _saveCurrentSession();
     _jumpDetector.reset();
-    setState(() {});
+    if (mounted) setState(() {});
+  }
+
+  void _close() async {
+    await _saveCurrentSession();
+    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -138,15 +181,19 @@ class _PoseDetectorScreenState extends State<PoseDetectorScreen> {
                     children: [
                       FloatingActionButton(
                         heroTag: 'btn_close',
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: _isSaving ? null : _close,
                         backgroundColor: Colors.white24,
-                        child: const Icon(Icons.close),
+                        child: _isSaving 
+                          ? const CircularProgressIndicator(color: Colors.white) 
+                          : const Icon(Icons.close),
                       ),
                       FloatingActionButton(
                         heroTag: 'btn_reset',
-                        onPressed: _reset,
+                        onPressed: _isSaving ? null : _reset,
                         backgroundColor: Colors.redAccent,
-                        child: const Icon(Icons.refresh),
+                        child: _isSaving 
+                          ? const CircularProgressIndicator(color: Colors.white) 
+                          : const Icon(Icons.refresh),
                       ),
                     ],
                   ),

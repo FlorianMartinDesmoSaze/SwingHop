@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "356796506211",
+    "project_id": "swinghop",
+    "storage_bucket": "swinghop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:356796506211:android:d7d64787c5e86ee306d856",
+        "android_client_info": {
+          "package_name": "com.example.swing_hop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2QAFusk3r1Q7t2FyB6HbEoQSvLM4imf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
