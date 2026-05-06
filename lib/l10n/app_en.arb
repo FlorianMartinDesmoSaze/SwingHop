@@ -1,0 +1,126 @@
+﻿{
+  "@@locale": "en",
+  "appTitle": "SwingHop",
+  "navTraining": "Training",
+  "navSocial": "Community",
+  "navDuels": "Duels",
+  "navProfile": "Profile",
+  
+  "settingsTitle": "Settings",
+  "settingsProfile": "Profile",
+  "settingsPseudo": "Username",
+  "settingsUpdate": "Update",
+  "settingsPseudoUpdated": "Username updated!",
+  "settingsAccount": "Account",
+  "settingsSecureAccount": "Secure Account",
+  "settingsSecureButton": "Secure",
+  "settingsSecureDialogTitle": "Secure Account",
+  "settingsSecureDialogBody": "Link an email to never lose your progress.",
+  "settingsSecureDialogEmail": "Email",
+  "settingsSecureDialogPassword": "Password",
+  "settingsSecureDialogFillAll": "Please fill in email and password.",
+  "settingsSecureSuccess": "Account secured successfully!",
+  "settingsGuestAccount": "Guest Account - Risk of loss",
+  "settingsSecuredAccount": "Secured account ({email})",
+  "@settingsSecuredAccount": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsLanguage": "Language",
+  "settingsGame": "Game",
+  "settingsSound": "Sound Effects",
+  "settingsVibration": "Haptic Vibrations",
+  "settingsDebug": "Debug (Dev Only)",
+  "settingsMockData": "Generate Mock Data",
+  "settingsMockSubtitle": "Adds fake players and challenges",
+  "settingsInject": "Inject",
+  
+  "profileTitle": "My Profile",
+  "profilePoints": "Total Points",
+  "profileWins": "Wins",
+  "profileLosses": "Losses",
+  "profileHistory": "RECENT MATCHES",
+  "profileNoHistory": "No completed duels yet.",
+  
+  "socialFriends": "My Friends",
+  "socialSearchHint": "Search friend by username...",
+  "socialNoFriends": "No friends added yet.\nSearch for a username above!",
+  "socialChallenge": "Challenge to duel",
+  "socialRemove": "Remove friend",
+  "socialFriendRemoved": "{pseudo} has been removed from your friends.",
+  "@socialFriendRemoved": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "socialChallengesSent": "Challenge sent to {pseudo} with {score} jumps!",
+  "@socialChallengesSent": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      },
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "duelTitle": "Duel Arena",
+  "duelReceived": "Challenge received!",
+  "duelPublic": "Public Duels",
+  "duelDirect": "Direct Challenges",
+  "duelJoin": "Accept",
+  "duelWaiting": "Your pending challenge",
+  "duelNoPending": "No pending challenges.\nBe the first to launch one!",
+  "duelLaunched": "Challenge launched with {score} jumps!",
+  "@duelLaunched": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelWon": "You won the duel! (+50 pts)",
+  "duelLost": "You lost the duel... (+10 pts)",
+  "duelDirectFrom": "DIRECT CHALLENGE FROM {pseudo}!",
+  "@duelDirectFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "duelScoreToBeat": "Score to beat: {score} jumps",
+  "@duelScoreToBeat": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelChallengeFrom": "Challenge from {pseudo}",
+  "@duelChallengeFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "trainingFreeMode": "FREE MODE",
+  "trainingFreeDesc": "Jump without time limit",
+  "trainingChallengeMode": "CHALLENGE MODE",
+  "trainingChallengeDesc": "Max jumps in 30 seconds",
+  
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonError": "Error",
+  "commonSuccess": "Success",
+  "duelStart": "Start a Challenge",
+  "commonSee": "SEE"
+}

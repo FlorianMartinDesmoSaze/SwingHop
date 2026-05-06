@@ -1,0 +1,126 @@
+﻿{
+  "@@locale": "es",
+  "appTitle": "SwingHop",
+  "navTraining": "Entrenamiento",
+  "navSocial": "Comunidad",
+  "navDuels": "Duelos",
+  "navProfile": "Perfil",
+  
+  "settingsTitle": "Ajustes",
+  "settingsProfile": "Perfil",
+  "settingsPseudo": "Apodo",
+  "settingsUpdate": "Actualizar",
+  "settingsPseudoUpdated": "¡Apodo actualizado!",
+  "settingsAccount": "Cuenta",
+  "settingsSecureAccount": "Asegurar cuenta",
+  "settingsSecureButton": "Asegurar",
+  "settingsSecureDialogTitle": "Asegurar cuenta",
+  "settingsSecureDialogBody": "Vincula un email para no perder nunca tu progreso.",
+  "settingsSecureDialogEmail": "Email",
+  "settingsSecureDialogPassword": "Contraseña",
+  "settingsSecureDialogFillAll": "Por favor rellena el email y la contraseña.",
+  "settingsSecureSuccess": "¡Cuenta asegurada con éxito!",
+  "settingsGuestAccount": "Cuenta de invitado - Riesgo de pérdida",
+  "settingsSecuredAccount": "Cuenta segura ({email})",
+  "@settingsSecuredAccount": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsLanguage": "Idioma",
+  "settingsGame": "Juego",
+  "settingsSound": "Efectos de sonido",
+  "settingsVibration": "Vibración háptica",
+  "settingsDebug": "Debug (Dev Only)",
+  "settingsMockData": "Generar datos falsos",
+  "settingsMockSubtitle": "Añade jugadores y desafíos falsos",
+  "settingsInject": "Inyectar",
+  
+  "profileTitle": "Mi Perfil",
+  "profilePoints": "Puntos Totales",
+  "profileWins": "Victorias",
+  "profileLosses": "Derrotas",
+  "profileHistory": "ÚLTIMOS PARTIDOS",
+  "profileNoHistory": "Aún no hay duelos completados.",
+  
+  "socialFriends": "Mis Amigos",
+  "socialSearchHint": "Buscar amigo por apodo...",
+  "socialNoFriends": "Aún no has añadido amigos.\n¡Busca un apodo arriba!",
+  "socialChallenge": "Desafiar a duelo",
+  "socialRemove": "Eliminar de amigos",
+  "socialFriendRemoved": "{pseudo} ha sido eliminado de tus amigos.",
+  "@socialFriendRemoved": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "socialChallengesSent": "¡Desafío enviado a {pseudo} con {score} saltos!",
+  "@socialChallengesSent": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      },
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "duelTitle": "Arena de Duelos",
+  "duelReceived": "¡Desafío recibido!",
+  "duelPublic": "Duelos Públicos",
+  "duelDirect": "Desafíos Directos",
+  "duelJoin": "Aceptar",
+  "duelWaiting": "Tu desafío pendiente",
+  "duelNoPending": "No hay desafíos pendientes.\n¡Sé el primero en lanzar uno!",
+  "duelLaunched": "¡Desafío lanzado con {score} saltos!",
+  "@duelLaunched": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelWon": "¡Ganaste el duelo! (+50 pts)",
+  "duelLost": "Perdiste el duelo... (+10 pts)",
+  "duelDirectFrom": "¡DESAFÍO DIRECTO DE {pseudo}!",
+  "@duelDirectFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "duelScoreToBeat": "Puntuación a batir: {score} saltos",
+  "@duelScoreToBeat": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelChallengeFrom": "Desafío de {pseudo}",
+  "@duelChallengeFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "trainingFreeMode": "MODO LIBRE",
+  "trainingFreeDesc": "Salta sin límite de tiempo",
+  "trainingChallengeMode": "MODO DESAFÍO",
+  "trainingChallengeDesc": "Máximos saltos en 30 segundos",
+  
+  "commonCancel": "Cancelar",
+  "commonSave": "Guardar",
+  "commonError": "Error",
+  "commonSuccess": "Éxito",
+  "duelStart": "Iniciar desaf\u00edo",
+  "commonSee": "VER"
+}

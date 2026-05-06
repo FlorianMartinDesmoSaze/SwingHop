@@ -1,0 +1,126 @@
+﻿{
+  "@@locale": "ja",
+  "appTitle": "SwingHop",
+  "navTraining": "トレーニング",
+  "navSocial": "コミュニティ",
+  "navDuels": "デュエル",
+  "navProfile": "プロフィール",
+  
+  "settingsTitle": "設定",
+  "settingsProfile": "プロフィール",
+  "settingsPseudo": "ユーザー名",
+  "settingsUpdate": "更新",
+  "settingsPseudoUpdated": "ユーザー名を更新しました！",
+  "settingsAccount": "アカウント",
+  "settingsSecureAccount": "アカウントの保護",
+  "settingsSecureButton": "保護する",
+  "settingsSecureDialogTitle": "アカウントの保護",
+  "settingsSecureDialogBody": "メールアドレスを登録して進捗を失わないようにしましょう。",
+  "settingsSecureDialogEmail": "メールアドレス",
+  "settingsSecureDialogPassword": "パスワード",
+  "settingsSecureDialogFillAll": "メールアドレスとパスワードを入力してください。",
+  "settingsSecureSuccess": "アカウントが保護されました！",
+  "settingsGuestAccount": "ゲストアカウント - 紛失の恐れあり",
+  "settingsSecuredAccount": "保護済みアカウント ({email})",
+  "@settingsSecuredAccount": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsLanguage": "言語",
+  "settingsGame": "ゲーム",
+  "settingsSound": "効果音",
+  "settingsVibration": "触覚フィードバック",
+  "settingsDebug": "デバッグ (Dev Only)",
+  "settingsMockData": "テストデータの生成",
+  "settingsMockSubtitle": "架空のプレイヤーとデュエルを追加",
+  "settingsInject": "注入",
+  
+  "profileTitle": "マイプロフィール",
+  "profilePoints": "合計ポイント",
+  "profileWins": "勝利数",
+  "profileLosses": "敗北数",
+  "profileHistory": "最近の対戦",
+  "profileNoHistory": "完了したデュエルはありません。",
+  
+  "socialFriends": "フレンド",
+  "socialSearchHint": "ユーザー名で検索...",
+  "socialNoFriends": "フレンドがまだいません。\n上のユーザー名で検索しましょう！",
+  "socialChallenge": "デュエルを申し込む",
+  "socialRemove": "フレンドから削除",
+  "socialFriendRemoved": "{pseudo} をフレンドから削除しました。",
+  "@socialFriendRemoved": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "socialChallengesSent": "{pseudo} に {score} 回のチャレンジを送信しました！",
+  "@socialChallengesSent": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      },
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "duelTitle": "デュエルアリーナ",
+  "duelReceived": "チャレンジを受け取りました！",
+  "duelPublic": "パブリックデュエル",
+  "duelDirect": "ダイレクトチャレンジ",
+  "duelJoin": "受ける",
+  "duelWaiting": "待機中のチャレンジ",
+  "duelNoPending": "待機中のチャレンジはありません。\n最初に始めましょう！",
+  "duelLaunched": "{score} 回のチャレンジを開始しました！",
+  "@duelLaunched": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelWon": "デュエルに勝ちました！(+50 pts)",
+  "duelLost": "デュエルに負けました... (+10 pts)",
+  "duelDirectFrom": "{pseudo} からのダイレクトチャレンジ！",
+  "@duelDirectFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "duelScoreToBeat": "目標スコア：{score} 回",
+  "@duelScoreToBeat": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelChallengeFrom": "{pseudo} のチャレンジ",
+  "@duelChallengeFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "trainingFreeMode": "フリーモード",
+  "trainingFreeDesc": "時間制限なしでジャンプ",
+  "trainingChallengeMode": "チャレンジモード",
+  "trainingChallengeDesc": "30秒間で最高回数に挑戦",
+  
+  "commonCancel": "キャンセル",
+  "commonSave": "保存",
+  "commonError": "エラー",
+  "commonSuccess": "成功",
+  "duelStart": "\u30c1\u30e3\u30ec\u30f3\u30b8\u958b\u59cb",
+  "commonSee": "見る"
+}

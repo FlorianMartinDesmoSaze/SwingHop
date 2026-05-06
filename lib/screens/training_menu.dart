@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'pose_detector_screen.dart';
+import '../l10n/app_localizations.dart';
 
 /// Écran d'accueil "Jouer" : affiche le titre et le bouton de démarrage.
 class TrainingMenu extends StatelessWidget {
@@ -24,9 +25,9 @@ class TrainingMenu extends StatelessWidget {
             ),
           ).animate().fade(duration: 500.ms).slideY(begin: -0.2),
           const SizedBox(height: 10),
-          const Text(
-            'MODE LIBRE',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.trainingFreeMode,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.greenAccent,

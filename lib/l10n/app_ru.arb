@@ -1,0 +1,126 @@
+﻿{
+  "@@locale": "ru",
+  "appTitle": "SwingHop",
+  "navTraining": "Тренировка",
+  "navSocial": "Сообщество",
+  "navDuels": "Дуэли",
+  "navProfile": "Профиль",
+  
+  "settingsTitle": "Настройки",
+  "settingsProfile": "Профиль",
+  "settingsPseudo": "Никнейм",
+  "settingsUpdate": "Обновить",
+  "settingsPseudoUpdated": "Никнейм обновлён!",
+  "settingsAccount": "Аккаунт",
+  "settingsSecureAccount": "Защитить аккаунт",
+  "settingsSecureButton": "Защитить",
+  "settingsSecureDialogTitle": "Защитить аккаунт",
+  "settingsSecureDialogBody": "Привяжите email, чтобы никогда не потерять прогресс.",
+  "settingsSecureDialogEmail": "Email",
+  "settingsSecureDialogPassword": "Пароль",
+  "settingsSecureDialogFillAll": "Пожалуйста, заполните email и пароль.",
+  "settingsSecureSuccess": "Аккаунт успешно защищен!",
+  "settingsGuestAccount": "Гостевой аккаунт - риск потери данных",
+  "settingsSecuredAccount": "Аккаунт защищён ({email})",
+  "@settingsSecuredAccount": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsLanguage": "Язык",
+  "settingsGame": "Игра",
+  "settingsSound": "Звуковые эффекты",
+  "settingsVibration": "Виброотклик",
+  "settingsDebug": "Отладка (Dev Only)",
+  "settingsMockData": "Генерация тестовых данных",
+  "settingsMockSubtitle": "Добавляет фейковых игроков и дуэли",
+  "settingsInject": "Вставить",
+  
+  "profileTitle": "Мой профиль",
+  "profilePoints": "Всего очков",
+  "profileWins": "Победы",
+  "profileLosses": "Поражения",
+  "profileHistory": "ПОСЛЕДНИЕ МАТЧИ",
+  "profileNoHistory": "Завершенных дуэлей пока нет.",
+  
+  "socialFriends": "Мои друзья",
+  "socialSearchHint": "Поиск друга по никнейму...",
+  "socialNoFriends": "Вы еще не добавили друзей.\nПоищите никнейм выше!",
+  "socialChallenge": "Вызвать на дуэль",
+  "socialRemove": "Удалить из друзей",
+  "socialFriendRemoved": "{pseudo} удалён из ваших друзей.",
+  "@socialFriendRemoved": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "socialChallengesSent": "Вызов отправлен {pseudo} с результатом {score} прыжков!",
+  "@socialChallengesSent": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      },
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "duelTitle": "Арена дуэлей",
+  "duelReceived": "Получен вызов!",
+  "duelPublic": "Публичные дуэли",
+  "duelDirect": "Прямые вызовы",
+  "duelJoin": "Принять",
+  "duelWaiting": "Ваш ожидающий вызов",
+  "duelNoPending": "Нет ожидающих вызовов.\nБудьте первым!",
+  "duelLaunched": "Вызов брошен с {score} прыжками!",
+  "@duelLaunched": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelWon": "Вы выиграли дуэль! (+50 очков)",
+  "duelLost": "Вы проиграли дуэль... (+10 очков)",
+  "duelDirectFrom": "ПРЯМОЙ ВЫЗОВ ОТ {pseudo}!",
+  "@duelDirectFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "duelScoreToBeat": "Счет для победы: {score} прыжков",
+  "@duelScoreToBeat": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelChallengeFrom": "Вызов от {pseudo}",
+  "@duelChallengeFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "trainingFreeMode": "СВОБОДНЫЙ РЕЖИМ",
+  "trainingFreeDesc": "Прыгайте без ограничения времени",
+  "trainingChallengeMode": "РЕЖИМ ВЫЗОВА",
+  "trainingChallengeDesc": "Макс. прыжков за 30 секунд",
+  
+  "commonCancel": "Отмена",
+  "commonSave": "Сохранить",
+  "commonError": "Ошибка",
+  "commonSuccess": "Успех",
+  "duelStart": "\u0411\u0440\u043e\u0441\u0438\u0442\u044c \u0432\u044b\u0437\u043e\u0432",
+  "commonSee": "СМОТРЕТЬ"
+}

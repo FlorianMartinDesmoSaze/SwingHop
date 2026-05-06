@@ -1,0 +1,126 @@
+﻿{
+  "@@locale": "zh",
+  "appTitle": "SwingHop",
+  "navTraining": "训练",
+  "navSocial": "社区",
+  "navDuels": "对决",
+  "navProfile": "个人资料",
+  
+  "settingsTitle": "设置",
+  "settingsProfile": "个人资料",
+  "settingsPseudo": "昵称",
+  "settingsUpdate": "更新",
+  "settingsPseudoUpdated": "昵称已更新！",
+  "settingsAccount": "账户",
+  "settingsSecureAccount": "保护账户",
+  "settingsSecureButton": "保护",
+  "settingsSecureDialogTitle": "保护账户",
+  "settingsSecureDialogBody": "绑定邮箱，永不丢失进度。",
+  "settingsSecureDialogEmail": "邮箱",
+  "settingsSecureDialogPassword": "密码",
+  "settingsSecureDialogFillAll": "请填写邮箱和密码。",
+  "settingsSecureSuccess": "账户保护成功！",
+  "settingsGuestAccount": "访客账户 - 有丢失风险",
+  "settingsSecuredAccount": "已保护账户 ({email})",
+  "@settingsSecuredAccount": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsLanguage": "语言",
+  "settingsGame": "游戏",
+  "settingsSound": "音效",
+  "settingsVibration": "触觉反馈",
+  "settingsDebug": "调试 (Dev Only)",
+  "settingsMockData": "生成测试数据",
+  "settingsMockSubtitle": "添加虚假玩家和对决",
+  "settingsInject": "注入",
+  
+  "profileTitle": "我的资料",
+  "profilePoints": "总积分",
+  "profileWins": "胜场",
+  "profileLosses": "败场",
+  "profileHistory": "最近比赛",
+  "profileNoHistory": "目前没有已完成的对决。",
+  
+  "socialFriends": "我的好友",
+  "socialSearchHint": "通过昵称搜索好友...",
+  "socialNoFriends": "你还没有添加好友。\n在上方搜索昵称吧！",
+  "socialChallenge": "发起对决",
+  "socialRemove": "删除好友",
+  "socialFriendRemoved": "{pseudo} 已从您的好友列表中删除。",
+  "@socialFriendRemoved": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "socialChallengesSent": "已向 {pseudo} 发送 {score} 次跳跃的挑战！",
+  "@socialChallengesSent": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      },
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "duelTitle": "对决竞技场",
+  "duelReceived": "收到挑战！",
+  "duelPublic": "公开对决",
+  "duelDirect": "直接挑战",
+  "duelJoin": "接受",
+  "duelWaiting": "你待处理的挑战",
+  "duelNoPending": "没有待处理的挑战。\n成为第一个发起挑战的人！",
+  "duelLaunched": "已发起 {score} 次跳跃的挑战！",
+  "@duelLaunched": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelWon": "你赢得了对决！(+50 pts)",
+  "duelLost": "你输掉了对决... (+10 pts)",
+  "duelDirectFrom": "来自 {pseudo} 的直接挑战！",
+  "@duelDirectFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  "duelScoreToBeat": "待打破的分数：{score} 次跳跃",
+  "@duelScoreToBeat": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "duelChallengeFrom": "{pseudo} 的挑战",
+  "@duelChallengeFrom": {
+    "placeholders": {
+      "pseudo": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "trainingFreeMode": "自由模式",
+  "trainingFreeDesc": "无时间限制跳跃",
+  "trainingChallengeMode": "挑战模式",
+  "trainingChallengeDesc": "30秒内挑战最高次数",
+  
+  "commonCancel": "取消",
+  "commonSave": "保存",
+  "commonError": "错误",
+  "commonSuccess": "成功",
+  "duelStart": "\u53d1\u8d77\u6311\u6218",
+  "commonSee": "查看"
+}

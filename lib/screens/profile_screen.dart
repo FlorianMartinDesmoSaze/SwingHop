@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
 import '../models/user_profile.dart';
@@ -46,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator(color: Colors.greenAccent));
     }
@@ -60,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent, // Utilise le fond de l'app
       appBar: AppBar(
-        title: const Text('Mon Profil', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.profileTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -85,29 +87,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ).animate().fade(delay: 300.ms).slideY(begin: 0.2),
           ),
           const SizedBox(height: 40),
-          _buildStatCard('Points Totaux', _profile!.totalPoints.toString(), Icons.stars)
+          _buildStatCard(l10n.profilePoints, _profile!.totalPoints.toString(), Icons.stars)
               .animate().fade(delay: 400.ms).slideY(begin: 0.2),
           const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
-                child: _buildStatCard('Victoires', _profile!.duelWins.toString(), Icons.emoji_events, color: Colors.amber)
+                child: _buildStatCard(l10n.profileWins, _profile!.duelWins.toString(), Icons.emoji_events, color: Colors.amber)
                     .animate().fade(delay: 500.ms).slideX(begin: -0.2),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildStatCard('Défaites', _profile!.duelLosses.toString(), Icons.sentiment_dissatisfied, color: Colors.redAccent)
+                child: _buildStatCard(l10n.profileLosses, _profile!.duelLosses.toString(), Icons.sentiment_dissatisfied, color: Colors.redAccent)
                     .animate().fade(delay: 600.ms).slideX(begin: 0.2),
               ),
             ],
           ),
           const SizedBox(height: 40),
-          const Text('DERNIERS MATCHS', style: TextStyle(color: Colors.greenAccent, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.5))
+          Text(l10n.profileHistory, style: const TextStyle(color: Colors.greenAccent, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.5))
               .animate().fade(delay: 700.ms).slideX(begin: -0.2),
           const SizedBox(height: 16),
           if (_history.isEmpty)
             Center(
-              child: const Text("Aucun duel terminé pour le moment.", style: TextStyle(color: Colors.white54))
+              child: Text(l10n.profileNoHistory, style: const TextStyle(color: Colors.white54))
                   .animate().fade(delay: 800.ms),
             )
           else

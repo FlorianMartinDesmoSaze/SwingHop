@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'app.dart';
 import 'services/audio_haptic_service.dart';
+import 'services/locale_service.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -22,6 +23,7 @@ Future<void> main() async {
   );
 
   await AudioHapticService().init();
+  final localeProvider = LocaleProvider();
 
   try {
     cameras = await availableCameras();
@@ -29,5 +31,13 @@ Future<void> main() async {
     debugPrint('Erreur lors de l\'initialisation des caméras: $e');
   }
   
-  runApp(SwingHopApp(cameras: cameras));
+  runApp(
+    ListenableBuilder(
+      listenable: localeProvider,
+      builder: (context, _) => SwingHopApp(
+        cameras: cameras, 
+        localeProvider: localeProvider
+      ),
+    ),
+  );
 }

@@ -7,6 +7,7 @@ import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
 import 'duel_active_screen.dart';
 import 'public_profile_screen.dart';
+import '../l10n/app_localizations.dart';
 
 class FriendsTab extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -92,7 +93,10 @@ class _FriendsTabState extends State<FriendsTab> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${friend.pseudo} a été retiré(e) de vos amis.', style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          content: Text(
+            AppLocalizations.of(context)!.socialFriendRemoved(friend.pseudo),
+            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
           backgroundColor: Colors.white,
         )
       );
@@ -136,8 +140,11 @@ class _FriendsTabState extends State<FriendsTab> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Défi direct envoyé à ${friend.pseudo} avec $score sauts !', style: const TextStyle(color: Colors.black)), 
-          backgroundColor: Colors.redAccent
+          content: Text(
+            AppLocalizations.of(context)!.socialChallengesSent(friend.pseudo, score),
+            style: const TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.redAccent,
         )
       );
     }
@@ -179,7 +186,7 @@ class _FriendsTabState extends State<FriendsTab> {
                       focusNode: focusNode,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        hintText: 'Chercher par pseudo...',
+                        hintText: AppLocalizations.of(context)!.socialSearchHint,
                         hintStyle: const TextStyle(color: Colors.white54),
                         prefixIcon: const Icon(Icons.search, color: Colors.greenAccent),
                         filled: true,
@@ -257,10 +264,10 @@ class _FriendsTabState extends State<FriendsTab> {
                     children: [
                       const Icon(Icons.group_off, size: 80, color: Colors.white24),
                       const SizedBox(height: 20),
-                      const Text(
-                        "Tu n'as pas encore ajouté d'amis.\nCherche un pseudo en haut !",
+                      Text(
+                        AppLocalizations.of(context)!.socialNoFriends,
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white54, fontSize: 16),
+                        style: const TextStyle(color: Colors.white54, fontSize: 16),
                       ),
                     ],
                   ).animate().fade(duration: 600.ms).scale(),
@@ -305,12 +312,12 @@ class _FriendsTabState extends State<FriendsTab> {
                           children: [
                             IconButton(
                               icon: const Text('⚔️', style: TextStyle(fontSize: 24)),
-                              tooltip: 'Provoquer en duel',
+                              tooltip: AppLocalizations.of(context)!.socialChallenge,
                               onPressed: () => _challengeFriend(friend),
                             ),
                             IconButton(
                               icon: const Icon(Icons.person_remove, color: Colors.white54),
-                              tooltip: 'Retirer des amis',
+                              tooltip: AppLocalizations.of(context)!.socialRemove,
                               onPressed: () => _removeFriend(friend),
                             ),
                           ],

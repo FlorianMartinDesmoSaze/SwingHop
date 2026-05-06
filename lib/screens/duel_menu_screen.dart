@@ -8,6 +8,7 @@ import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
 import '../services/audio_haptic_service.dart';
 import 'duel_active_screen.dart';
+import '../l10n/app_localizations.dart';
 
 class DuelMenuScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -80,7 +81,7 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
     
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Défi lancé avec $score sauts !', style: const TextStyle(color: Colors.black)), backgroundColor: Colors.amberAccent)
+        SnackBar(content: Text(AppLocalizations.of(context)!.duelLaunched(score), style: const TextStyle(color: Colors.black)), backgroundColor: Colors.amberAccent)
       );
     }
   }
@@ -123,7 +124,10 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(won ? 'Tu as gagné le duel ! (+50 pts)' : 'Tu as perdu le duel... (+10 pts)', style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)), 
+          content: Text(
+            won ? AppLocalizations.of(context)!.duelWon : AppLocalizations.of(context)!.duelLost,
+            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
           backgroundColor: won ? Colors.greenAccent : Colors.orangeAccent,
           duration: const Duration(seconds: 4),
         )
@@ -139,10 +143,12 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
 
     final myUid = _currentUser?.uid;
 
+    final l10n = AppLocalizations.of(context)!;
+
     final scaffold = Scaffold(
       backgroundColor: Colors.transparent, // Background from theme
       appBar: AppBar(
-        title: const Text('Arène de Duel', style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+        title: Text(l10n.duelTitle, style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -154,10 +160,11 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
                 children: [
                   const Icon(Icons.bolt, size: 80, color: Colors.amberAccent),
                   const SizedBox(height: 20),
-                  const Text("Aucun défi en attente.\nSois le premier à en lancer un !", 
-                    textAlign: TextAlign.center, 
-                    style: TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w500)
-                  ),
+                  Text(
+                     l10n.duelNoPending,
+                     textAlign: TextAlign.center,
+                     style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w500)
+                   ),
                 ],
               ).animate().fade(duration: 600.ms).scale(begin: const Offset(0.8, 0.8)),
             )
@@ -196,17 +203,21 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
                         : const Icon(Icons.bolt, color: Colors.amberAccent),
                     ),
                     title: Text(
-                      isMyDuel ? 'Ton défi en attente' : (isDirectChallenge ? 'DÉFI DIRECT DE ${duel.creatorPseudo.toUpperCase()} !' : 'Défi de ${duel.creatorPseudo}'),
+                      isMyDuel
+                        ? l10n.duelWaiting
+                        : (isDirectChallenge
+                            ? l10n.duelDirectFrom(duel.creatorPseudo.toUpperCase())
+                            : l10n.duelChallengeFrom(duel.creatorPseudo)),
                       style: TextStyle(
-                        fontWeight: FontWeight.w900, 
-                        color: isDirectChallenge ? Colors.redAccent : Colors.white, 
+                        fontWeight: FontWeight.w900,
+                        color: isDirectChallenge ? Colors.redAccent : Colors.white,
                         fontSize: isDirectChallenge ? 16 : 18
                       ),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        'Score à battre : ${duel.creatorScore} sauts',
+                        l10n.duelScoreToBeat(duel.creatorScore),
                         style: TextStyle(color: isDirectChallenge ? Colors.redAccent.withValues(alpha: 0.8) : Colors.amberAccent, fontWeight: FontWeight.w600, fontSize: 15),
                       ),
                     ),
@@ -221,7 +232,7 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
                             elevation: 5,
                             shadowColor: Colors.amberAccent.withValues(alpha: 0.5),
                           ),
-                          child: const Text('Relever', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: Text(l10n.duelJoin, style: const TextStyle(fontWeight: FontWeight.bold)),
                         ),
                   ),
                 ).animate().fade(delay: Duration(milliseconds: 100 * index)).slideX(begin: 0.1);
@@ -243,7 +254,7 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
           onPressed: _startNewDuel,
           backgroundColor: Colors.amberAccent,
           icon: const Icon(Icons.add, color: Colors.black),
-          label: const Text('Lancer un défi', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
+          label: Text(l10n.duelStart, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
         ),
       ).animate().scale(delay: 500.ms, duration: 400.ms, curve: Curves.easeOutBack),
     );

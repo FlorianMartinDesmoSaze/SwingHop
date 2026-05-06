@@ -4,9 +4,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
 import '../services/audio_haptic_service.dart';
+import '../services/locale_service.dart';
+import '../l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final LocaleProvider localeProvider;
+  const SettingsScreen({super.key, required this.localeProvider});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -88,7 +91,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _currentPseudo = newPseudo;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pseudo mis à jour !'), backgroundColor: Colors.greenAccent)
+        SnackBar(content: Text(AppLocalizations.of(context)!.settingsPseudoUpdated), backgroundColor: Colors.greenAccent)
       );
     }
   }
@@ -99,7 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez remplir email et mot de passe.'), backgroundColor: Colors.redAccent)
+        SnackBar(content: Text(AppLocalizations.of(context)!.settingsSecureDialogFillAll), backgroundColor: Colors.redAccent)
       );
       return;
     }
@@ -108,9 +111,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       await _authService.linkWithEmailAndPassword(email, password);
       if (mounted) {
-        Navigator.pop(context); // Fermer le dialogue
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Compte sécurisé avec succès !'), backgroundColor: Colors.greenAccent)
+          SnackBar(content: Text(AppLocalizations.of(context)!.settingsSecureSuccess), backgroundColor: Colors.greenAccent)
         );
       }
     } catch (e) {
@@ -125,22 +128,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showLinkAccountDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1E293B),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Sécuriser le compte', style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
+        title: Text(l10n.settingsSecureDialogTitle, style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Associez un email pour ne jamais perdre votre progression.', style: TextStyle(color: Colors.white70)),
+            Text(l10n.settingsSecureDialogBody, style: const TextStyle(color: Colors.white70)),
             const SizedBox(height: 16),
             TextField(
               controller: _emailController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                labelText: 'Email', 
+                labelText: l10n.settingsSecureDialogEmail,
                 labelStyle: const TextStyle(color: Colors.white54),
                 filled: true,
                 fillColor: Colors.black26,
@@ -153,7 +157,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller: _passwordController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                labelText: 'Mot de passe', 
+                labelText: l10n.settingsSecureDialogPassword,
                 labelStyle: const TextStyle(color: Colors.white54),
                 filled: true,
                 fillColor: Colors.black26,
@@ -166,16 +170,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler', style: TextStyle(color: Colors.white54)),
+            child: Text(l10n.commonCancel, style: const TextStyle(color: Colors.white54)),
           ),
           ElevatedButton(
             onPressed: _isLinking ? null : _linkAccount,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.greenAccent, 
+              backgroundColor: Colors.greenAccent,
               foregroundColor: Colors.black,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: _isLinking ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.black)) : const Text('Sauvegarder', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: _isLinking
+                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.black))
+                : Text(l10n.commonSave, style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -192,13 +198,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final user = _authService.currentUser;
     final isAnonymous = user?.isAnonymous ?? true;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Paramètres', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+        title: Text(l10n.settingsTitle, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
         backgroundColor: Colors.transparent,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -207,7 +214,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          _buildSectionTitle('Profil').animate().fade().slideX(),
+          _buildSectionTitle(l10n.settingsProfile).animate().fade().slideX(),
           const SizedBox(height: 10),
           _buildGlassContainer(
             child: Row(
@@ -216,9 +223,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: TextField(
                     controller: _pseudoController,
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-                    decoration: const InputDecoration(
-                      labelText: 'Pseudo',
-                      labelStyle: TextStyle(color: Colors.white54),
+                    decoration: InputDecoration(
+                      labelText: l10n.settingsPseudo,
+                      labelStyle: const TextStyle(color: Colors.white54),
                       border: InputBorder.none,
                     ),
                   ),
@@ -232,45 +239,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   child: _isUpdatingPseudo 
                     ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white))
-                    : const Text('Mettre à jour', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    : Text(l10n.settingsUpdate, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
           ).animate().fade(delay: 100.ms).slideY(),
           
           const SizedBox(height: 40),
-          _buildSectionTitle('Compte').animate().fade(delay: 200.ms).slideX(),
+          _buildSectionTitle(l10n.settingsAccount).animate().fade(delay: 200.ms).slideX(),
           const SizedBox(height: 10),
           _buildGlassContainer(
             child: ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Sécuriser le compte', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              title: Text(l10n.settingsSecureAccount, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               subtitle: Text(
-                isAnonymous ? 'Compte Invité - Risque de perte' : 'Compte sécurisé (${user?.email})',
+                isAnonymous ? l10n.settingsGuestAccount : l10n.settingsSecuredAccount(user?.email ?? ''),
                 style: TextStyle(color: isAnonymous ? Colors.redAccent : Colors.white54),
               ),
-              trailing: isAnonymous 
+              trailing: isAnonymous
                 ? ElevatedButton(
                     onPressed: _showLinkAccountDialog,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent, 
+                      backgroundColor: Colors.redAccent,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('Sécuriser', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text(l10n.settingsSecureButton, style: const TextStyle(fontWeight: FontWeight.bold)),
                   )
                 : const Icon(Icons.check_circle, color: Colors.greenAccent, size: 32),
             ),
           ).animate().fade(delay: 300.ms).slideY(),
 
           const SizedBox(height: 40),
-          _buildSectionTitle('Jeu').animate().fade(delay: 400.ms).slideX(),
+          _buildSectionTitle(l10n.settingsLanguage).animate().fade(delay: 350.ms).slideX(),
+          const SizedBox(height: 10),
+          _buildGlassContainer(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<Locale>(
+                value: widget.localeProvider.locale ?? const Locale('fr'),
+                dropdownColor: const Color(0xFF1E293B),
+                isExpanded: true,
+                items: [
+                  const DropdownMenuItem(value: Locale('fr'), child: Text('🇫🇷 Français', style: TextStyle(color: Colors.white))),
+                  const DropdownMenuItem(value: Locale('en'), child: Text('🇬🇧 English', style: TextStyle(color: Colors.white))),
+                  const DropdownMenuItem(value: Locale('es'), child: Text('🇪🇸 Español', style: TextStyle(color: Colors.white))),
+                  const DropdownMenuItem(value: Locale('de'), child: Text('🇩🇪 Deutsch', style: TextStyle(color: Colors.white))),
+                  const DropdownMenuItem(value: Locale('it'), child: Text('🇮🇹 Italiano', style: TextStyle(color: Colors.white))),
+                  const DropdownMenuItem(value: Locale('ru'), child: Text('🇷🇺 Русский', style: TextStyle(color: Colors.white))),
+                  const DropdownMenuItem(value: Locale('zh'), child: Text('🇨🇳 中文', style: TextStyle(color: Colors.white))),
+                  const DropdownMenuItem(value: Locale('ja'), child: Text('🇯🇵 日本語', style: TextStyle(color: Colors.white))),
+                ],
+                onChanged: (Locale? newLocale) {
+                  if (newLocale != null) {
+                    widget.localeProvider.setLocale(newLocale);
+                  }
+                },
+              ),
+            ),
+          ).animate().fade(delay: 380.ms).slideY(),
+
+          const SizedBox(height: 40),
+          _buildSectionTitle(l10n.settingsGame).animate().fade(delay: 400.ms).slideX(),
           const SizedBox(height: 10),
           _buildGlassContainer(
             child: Column(
               children: [
                 SwitchListTile(
-                  title: const Text('Effets sonores', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  title: Text(l10n.settingsSound, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   value: _soundEnabled,
                   onChanged: _toggleSound,
                   activeThumbColor: Colors.greenAccent,
@@ -278,7 +313,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const Divider(color: Colors.white10),
                 SwitchListTile(
-                  title: const Text('Vibrations haptiques', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  title: Text(l10n.settingsVibration, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   value: _vibrationEnabled,
                   onChanged: _toggleVibration,
                   activeThumbColor: Colors.greenAccent,
@@ -289,20 +324,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ).animate().fade(delay: 500.ms).slideY(),
 
           const SizedBox(height: 40),
-          _buildSectionTitle('Debug (Dev Only)').animate().fade(delay: 600.ms).slideX(),
+          _buildSectionTitle(l10n.settingsDebug).animate().fade(delay: 600.ms).slideX(),
           const SizedBox(height: 10),
           _buildGlassContainer(
             child: ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Générer Fausses Données', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: const Text('Ajoute des faux joueurs et défis', style: TextStyle(color: Colors.white54)),
+              title: Text(l10n.settingsMockData, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              subtitle: Text(l10n.settingsMockSubtitle, style: const TextStyle(color: Colors.white54)),
               trailing: ElevatedButton(
                 onPressed: () async {
                   if (user != null) {
                     final messenger = ScaffoldMessenger.of(context);
                     await _firestoreService.generateMockData(user.uid);
                     messenger.showSnackBar(
-                      const SnackBar(content: Text('Données générées avec succès !'), backgroundColor: Colors.greenAccent)
+                      SnackBar(content: Text(l10n.commonSuccess), backgroundColor: Colors.greenAccent)
                     );
                   }
                 },
@@ -311,7 +346,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Injecter', style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Text(l10n.settingsInject, style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
           ).animate().fade(delay: 700.ms).slideY(),

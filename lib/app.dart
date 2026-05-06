@@ -11,19 +11,31 @@ import 'screens/settings_screen.dart';
 import 'services/firestore_service.dart';
 import 'services/auth_service.dart';
 import 'models/duel_record.dart';
+import 'services/locale_service.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
 /// Widget racine de l'application SwingHop.
 class SwingHopApp extends StatelessWidget {
   final List<CameraDescription> cameras;
-  const SwingHopApp({super.key, required this.cameras});
+  final LocaleProvider localeProvider;
+  const SwingHopApp({super.key, required this.cameras, required this.localeProvider});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SwingHop',
       debugShowCheckedModeBanner: false,
+      locale: localeProvider.locale,
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.greenAccent,
@@ -50,7 +62,7 @@ class SwingHopApp extends StatelessWidget {
           elevation: 10,
         ),
       ),
-      home: AuthWrapper(cameras: cameras),
+      home: AuthWrapper(cameras: cameras, localeProvider: localeProvider),
     );
   }
 }
@@ -58,7 +70,8 @@ class SwingHopApp extends StatelessWidget {
 /// Gère l'affichage entre l'onboarding (Setup) et l'app principale.
 class AuthWrapper extends StatelessWidget {
   final List<CameraDescription> cameras;
-  const AuthWrapper({super.key, required this.cameras});
+  final LocaleProvider localeProvider;
+  const AuthWrapper({super.key, required this.cameras, required this.localeProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +85,7 @@ class AuthWrapper extends StatelessWidget {
         }
 
         if (snapshot.hasData && snapshot.data != null) {
-          return MainNavigation(cameras: cameras);
+          return MainNavigation(cameras: cameras, localeProvider: localeProvider);
         }
 
         return SetupProfileScreen(
@@ -86,7 +99,8 @@ class AuthWrapper extends StatelessWidget {
 /// Navigation principale avec BottomNavigationBar.
 class MainNavigation extends StatefulWidget {
   final List<CameraDescription> cameras;
-  const MainNavigation({super.key, required this.cameras});
+  final LocaleProvider localeProvider;
+  const MainNavigation({super.key, required this.cameras, required this.localeProvider});
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();
@@ -141,12 +155,12 @@ class _MainNavigationState extends State<MainNavigation> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Défi reçu !',
+                    AppLocalizations.of(context)!.duelReceived,
                     style: const TextStyle(
                         color: Colors.redAccent, fontWeight: FontWeight.w900, fontSize: 15),
                   ),
                   Text(
-                    '${challenge.creatorPseudo} te provoque avec ${challenge.creatorScore} sauts — à toi de jouer !',
+                    AppLocalizations.of(context)!.duelDirectFrom(challenge.creatorPseudo),
                     style: const TextStyle(color: Colors.white70, fontSize: 13),
                   ),
                 ],
@@ -157,7 +171,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 setState(() => _selectedIndex = 2); // Aller à l'onglet Duels
               },
-              child: const Text('VOIR', style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.w900)),
+              child: Text(AppLocalizations.of(context)!.commonSee, style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.w900)),
             ),
           ],
         ),
@@ -173,6 +187,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: _buildBody(),
       bottomNavigationBar: BottomNavigationBar(
@@ -182,12 +197,12 @@ class _MainNavigationState extends State<MainNavigation> {
         backgroundColor: Colors.black,
         unselectedItemColor: Colors.white54,
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
-          BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: 'Libre'),
-          BottomNavigationBarItem(icon: Icon(Icons.bolt), label: 'Duels'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Communauté'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Réglages'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.person), label: l10n.navProfile),
+          BottomNavigationBarItem(icon: const Icon(Icons.fitness_center), label: l10n.navTraining),
+          BottomNavigationBarItem(icon: const Icon(Icons.bolt), label: l10n.navDuels),
+          BottomNavigationBarItem(icon: const Icon(Icons.people), label: l10n.navSocial),
+          BottomNavigationBarItem(icon: const Icon(Icons.settings), label: l10n.settingsTitle),
         ],
       ),
     );
@@ -204,7 +219,7 @@ class _MainNavigationState extends State<MainNavigation> {
       case 3:
         return SocialScreen(cameras: widget.cameras);
       case 4:
-        return const SettingsScreen();
+        return SettingsScreen(localeProvider: widget.localeProvider);
       default:
         return const SizedBox.shrink();
     }
