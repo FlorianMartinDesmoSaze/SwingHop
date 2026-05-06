@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'screens/training_menu.dart';
 import 'screens/profile_screen.dart';
 import 'screens/setup_profile_screen.dart';
-import 'screens/leaderboard_screen.dart';
+import 'screens/social_screen.dart';
 import 'screens/duel_menu_screen.dart';
 import 'screens/settings_screen.dart';
 
@@ -106,7 +106,7 @@ class _MainNavigationState extends State<MainNavigation> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
           BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: 'Libre'),
           BottomNavigationBarItem(icon: Icon(Icons.bolt), label: 'Duels'),
-          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: 'Classement'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Communauté'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Réglages'),
         ],
       ),
@@ -122,7 +122,7 @@ class _MainNavigationState extends State<MainNavigation> {
       case 2:
         return DuelMenuScreen(cameras: widget.cameras);
       case 3:
-        return const LeaderboardScreen();
+        return SocialScreen(cameras: widget.cameras);
       case 4:
         return const SettingsScreen();
       default:

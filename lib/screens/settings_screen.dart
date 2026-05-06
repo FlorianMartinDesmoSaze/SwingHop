@@ -299,12 +299,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               trailing: ElevatedButton(
                 onPressed: () async {
                   if (user != null) {
+                    final messenger = ScaffoldMessenger.of(context);
                     await _firestoreService.generateMockData(user.uid);
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Données générées avec succès !'), backgroundColor: Colors.greenAccent)
-                      );
-                    }
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('Données générées avec succès !'), backgroundColor: Colors.greenAccent)
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -332,7 +331,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B).withOpacity(0.6),
+        color: const Color(0xFF1E293B).withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.white10),
       ),

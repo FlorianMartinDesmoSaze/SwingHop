@@ -100,11 +100,11 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E293B).withOpacity(0.6),
+                    color: const Color(0xFF1E293B).withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.greenAccent.withOpacity(0.3), width: 2),
+                    border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.3), width: 2),
                     boxShadow: [
-                      BoxShadow(color: Colors.greenAccent.withOpacity(0.1), blurRadius: 20, spreadRadius: 5),
+                      BoxShadow(color: Colors.greenAccent.withValues(alpha: 0.1), blurRadius: 20, spreadRadius: 5),
                     ],
                   ),
                   child: Column(
@@ -136,7 +136,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                                 elevation: 5,
-                                shadowColor: Colors.greenAccent.withOpacity(0.5),
+                                shadowColor: Colors.greenAccent.withValues(alpha: 0.5),
                               ),
                               child: const Text(
                                 'C\'est parti !',

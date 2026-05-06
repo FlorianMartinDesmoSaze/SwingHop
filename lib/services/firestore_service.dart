@@ -34,7 +34,10 @@ class FirestoreService {
   /// Met à jour le pseudo d'un joueur
   Future<void> updatePseudo(String uid, String newPseudo) async {
     try {
-      await _db.collection('users').doc(uid).update({'pseudo': newPseudo});
+      await _db.collection('users').doc(uid).update({
+        'pseudo': newPseudo,
+        'pseudoLowercase': newPseudo.toLowerCase(),
+      });
     } catch (e) {
       debugPrint("Erreur updatePseudo: $e");
     }
@@ -110,8 +113,8 @@ class FirestoreService {
     }
   }
 
-  /// Récupère les duels en attente, triés par date
-  Future<List<DuelRecord>> getPendingDuels() async {
+  /// Récupère les duels en attente, triés par date (filtre sur la cible)
+  Future<List<DuelRecord>> getPendingDuels(String currentUid) async {
     try {
       final snapshot = await _db
           .collection('duels')
@@ -119,7 +122,16 @@ class FirestoreService {
           .orderBy('createdAt', descending: true)
           .get();
           
-      return snapshot.docs.map((doc) => DuelRecord.fromMap(doc.data(), doc.id)).toList();
+      final allDuels = snapshot.docs.map((doc) => DuelRecord.fromMap(doc.data(), doc.id)).toList();
+      
+      // On ne garde que les duels publics (targetUid == null), ou ceux qui nous sont adressés, 
+      // ou ceux qu'on a créés soi-même.
+      return allDuels.where((duel) {
+        return duel.targetUid == null || 
+               duel.targetUid == currentUid || 
+               duel.creatorUid == currentUid;
+      }).toList();
+      
     } catch (e) {
       debugPrint("Erreur getPendingDuels: $e");
       return [];
@@ -195,6 +207,96 @@ class FirestoreService {
       return duels;
     } catch (e) {
       debugPrint("Erreur getDuelHistory: $e");
+      return [];
+    }
+  }
+
+  // --- SOCIAL (AMIS) ---
+
+  /// Ajoute un ami via son pseudo
+  /// Retourne un message de succès ou d'erreur
+  Future<String> addFriendByPseudo(String currentUid, String friendPseudo) async {
+    try {
+      if (friendPseudo.trim().isEmpty) return "Pseudo vide.";
+      
+      // Chercher l'utilisateur avec ce pseudo (insensible à la casse)
+      final query = await _db
+          .collection('users')
+          .where('pseudoLowercase', isEqualTo: friendPseudo.trim().toLowerCase())
+          .limit(1)
+          .get();
+
+      if (query.docs.isEmpty) {
+        return "Joueur introuvable.";
+      }
+
+      final friendUid = query.docs.first.id;
+
+      if (friendUid == currentUid) {
+        return "Tu ne peux pas t'ajouter toi-même !";
+      }
+
+      // Ajouter à la liste d'amis
+      await _db.collection('users').doc(currentUid).update({
+        'friendsUids': FieldValue.arrayUnion([friendUid])
+      });
+
+      return "Ami ajouté avec succès !";
+    } catch (e) {
+      debugPrint("Erreur addFriendByPseudo: $e");
+      return "Une erreur est survenue.";
+    }
+  }
+
+  /// Retire un ami
+  Future<void> removeFriend(String currentUid, String friendUid) async {
+    try {
+      await _db.collection('users').doc(currentUid).update({
+        'friendsUids': FieldValue.arrayRemove([friendUid])
+      });
+    } catch (e) {
+      debugPrint("Erreur removeFriend: $e");
+    }
+  }
+
+  /// Récupère les profils des amis
+  Future<List<UserProfile>> getFriendsProfiles(String currentUid) async {
+    try {
+      final currentUser = await getUserProfile(currentUid);
+      if (currentUser == null || currentUser.friendsUids.isEmpty) return [];
+
+      // Firestore limite la requête 'whereIn' à 30 éléments maximum.
+      // Pour une MVP, on suppose qu'il y a < 30 amis, ou on fait des lots.
+      final friendsList = currentUser.friendsUids.take(30).toList();
+
+      final query = await _db
+          .collection('users')
+          .where('uid', whereIn: friendsList)
+          .get();
+
+      return query.docs.map((doc) => UserProfile.fromMap(doc.data())).toList();
+    } catch (e) {
+      debugPrint("Erreur getFriendsProfiles: $e");
+      return [];
+    }
+  }
+
+  /// Recherche des utilisateurs par préfixe de pseudo (insensible à la casse)
+  Future<List<UserProfile>> searchUsersByPrefix(String prefix) async {
+    try {
+      final searchStr = prefix.trim().toLowerCase();
+      if (searchStr.isEmpty) return [];
+
+      final query = await _db
+          .collection('users')
+          .where('pseudoLowercase', isGreaterThanOrEqualTo: searchStr)
+          .where('pseudoLowercase', isLessThan: '$searchStr\uf8ff')
+          .limit(3)
+          .get();
+
+      return query.docs.map((doc) => UserProfile.fromMap(doc.data())).toList();
+    } catch (e) {
+      debugPrint("Erreur searchUsersByPrefix: $e");
       return [];
     }
   }

@@ -44,7 +44,7 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
     final user = _authService.currentUser;
     if (user != null) {
       _currentUser = await _firestoreService.getUserProfile(user.uid);
-      _pendingDuels = await _firestoreService.getPendingDuels();
+      _pendingDuels = await _firestoreService.getPendingDuels(user.uid);
     }
     if (mounted) setState(() => _isLoading = false);
   }
@@ -167,40 +167,47 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
               itemBuilder: (context, index) {
                 final duel = _pendingDuels[index];
                 final isMyDuel = duel.creatorUid == myUid;
+                final isDirectChallenge = duel.targetUid == myUid;
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E293B).withOpacity(0.8),
+                    color: const Color(0xFF1E293B).withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isMyDuel ? Colors.amberAccent.withOpacity(0.6) : Colors.amberAccent.withOpacity(0.1),
-                      width: isMyDuel ? 2 : 1
+                      color: isMyDuel 
+                          ? Colors.amberAccent.withValues(alpha: 0.6) 
+                          : isDirectChallenge ? Colors.redAccent.withValues(alpha: 0.8) : Colors.amberAccent.withValues(alpha: 0.1),
+                      width: isMyDuel || isDirectChallenge ? 2 : 1
                     ),
                     boxShadow: [
                       if (isMyDuel)
-                        BoxShadow(
-                          color: Colors.amberAccent.withOpacity(0.2),
-                          blurRadius: 15,
-                          spreadRadius: 2,
-                        ),
+                        BoxShadow(color: Colors.amberAccent.withValues(alpha: 0.2), blurRadius: 15, spreadRadius: 2),
+                      if (isDirectChallenge)
+                        BoxShadow(color: Colors.redAccent.withValues(alpha: 0.3), blurRadius: 15, spreadRadius: 2),
                     ],
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                     leading: CircleAvatar(
-                      backgroundColor: Colors.amberAccent.withOpacity(0.2),
-                      child: const Icon(Icons.bolt, color: Colors.amberAccent),
+                      backgroundColor: isDirectChallenge ? Colors.redAccent.withValues(alpha: 0.2) : Colors.amberAccent.withValues(alpha: 0.2),
+                      child: isDirectChallenge 
+                        ? const Text('⚔️', style: TextStyle(fontSize: 22)) 
+                        : const Icon(Icons.bolt, color: Colors.amberAccent),
                     ),
                     title: Text(
-                      isMyDuel ? 'Ton défi en attente' : 'Défi de ${duel.creatorPseudo}',
-                      style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 18),
+                      isMyDuel ? 'Ton défi en attente' : (isDirectChallenge ? 'DÉFI DIRECT DE ${duel.creatorPseudo.toUpperCase()} !' : 'Défi de ${duel.creatorPseudo}'),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900, 
+                        color: isDirectChallenge ? Colors.redAccent : Colors.white, 
+                        fontSize: isDirectChallenge ? 16 : 18
+                      ),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
                         'Score à battre : ${duel.creatorScore} sauts',
-                        style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.w600, fontSize: 15),
+                        style: TextStyle(color: isDirectChallenge ? Colors.redAccent.withValues(alpha: 0.8) : Colors.amberAccent, fontWeight: FontWeight.w600, fontSize: 15),
                       ),
                     ),
                     trailing: isMyDuel 
@@ -212,7 +219,7 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
                             foregroundColor: Colors.black,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             elevation: 5,
-                            shadowColor: Colors.amberAccent.withOpacity(0.5),
+                            shadowColor: Colors.amberAccent.withValues(alpha: 0.5),
                           ),
                           child: const Text('Relever', style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
@@ -225,7 +232,7 @@ class _DuelMenuScreenState extends State<DuelMenuScreen> {
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
-              color: Colors.amberAccent.withOpacity(0.4),
+              color: Colors.amberAccent.withValues(alpha: 0.4),
               blurRadius: 20,
               spreadRadius: 2,
               offset: const Offset(0, 5),

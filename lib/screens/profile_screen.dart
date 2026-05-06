@@ -123,14 +123,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               return Container(
                 margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B).withOpacity(0.6),
+                  color: const Color(0xFF1E293B).withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: won ? Colors.greenAccent.withOpacity(0.5) : Colors.redAccent.withOpacity(0.5), width: 1.5),
+                  border: Border.all(color: won ? Colors.greenAccent.withValues(alpha: 0.5) : Colors.redAccent.withValues(alpha: 0.5), width: 1.5),
                 ),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   leading: CircleAvatar(
-                    backgroundColor: won ? Colors.greenAccent.withOpacity(0.2) : Colors.redAccent.withOpacity(0.2),
+                    backgroundColor: won ? Colors.greenAccent.withValues(alpha: 0.2) : Colors.redAccent.withValues(alpha: 0.2),
                     child: Icon(won ? Icons.emoji_events : Icons.close, color: won ? Colors.greenAccent : Colors.redAccent),
                   ),
                   title: Text(
@@ -157,12 +157,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B).withOpacity(0.7), // Effet glass
+        color: const Color(0xFF1E293B).withValues(alpha: 0.7), // Effet glass
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.05),
+            color: color.withValues(alpha: 0.05),
             blurRadius: 15,
             spreadRadius: 2,
           ),

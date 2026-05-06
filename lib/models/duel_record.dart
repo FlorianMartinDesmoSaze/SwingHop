@@ -13,6 +13,8 @@ class DuelRecord {
   final String status; // 'waiting', 'completed'
   final DateTime createdAt;
 
+  final String? targetUid; // NOUVEAU: Si non-null, ce duel est un défi direct pour ce joueur
+
   DuelRecord({
     this.id,
     required this.creatorUid,
@@ -22,6 +24,7 @@ class DuelRecord {
     this.challengerPseudo,
     this.challengerScore,
     this.status = 'waiting',
+    this.targetUid,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
@@ -33,6 +36,7 @@ class DuelRecord {
         'challengerPseudo': challengerPseudo,
         'challengerScore': challengerScore,
         'status': status,
+        'targetUid': targetUid,
         'createdAt': Timestamp.fromDate(createdAt),
       };
 
@@ -46,6 +50,7 @@ class DuelRecord {
       challengerPseudo: map['challengerPseudo'],
       challengerScore: map['challengerScore'],
       status: map['status'] ?? 'waiting',
+      targetUid: map['targetUid'],
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
