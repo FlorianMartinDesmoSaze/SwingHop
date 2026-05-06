@@ -4,6 +4,7 @@ import '../models/user_profile.dart';
 import '../services/firestore_service.dart';
 import '../widgets/rank_badge.dart';
 import '../services/auth_service.dart';
+import 'public_profile_screen.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   final bool isTab;
@@ -84,6 +85,12 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PublicProfileScreen(player: player),
+                      ),
+                    ),
                     leading: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

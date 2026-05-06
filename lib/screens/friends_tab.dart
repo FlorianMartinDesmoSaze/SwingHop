@@ -6,6 +6,7 @@ import '../models/duel_record.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
 import 'duel_active_screen.dart';
+import 'public_profile_screen.dart';
 
 class FriendsTab extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -278,6 +279,15 @@ class _FriendsTabState extends State<FriendsTab> {
                       ),
                       child: ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PublicProfileScreen(
+                              player: friend,
+                              cameras: widget.cameras,
+                            ),
+                          ),
+                        ),
                         leading: CircleAvatar(
                           backgroundColor: Colors.greenAccent.withAlpha(50),
                           child: Text(friend.rank.emoji, style: const TextStyle(fontSize: 20)),

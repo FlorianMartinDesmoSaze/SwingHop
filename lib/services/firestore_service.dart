@@ -259,6 +259,17 @@ class FirestoreService {
     }
   }
 
+  /// Ajoute un ami directement par son UID (utile depuis le profil public)
+  Future<void> addFriendByUid(String currentUid, String friendUid) async {
+    try {
+      await _db.collection('users').doc(currentUid).update({
+        'friendsUids': FieldValue.arrayUnion([friendUid])
+      });
+    } catch (e) {
+      debugPrint("Erreur addFriendByUid: $e");
+    }
+  }
+
   /// Récupère les profils des amis
   Future<List<UserProfile>> getFriendsProfiles(String currentUid) async {
     try {
@@ -299,6 +310,18 @@ class FirestoreService {
       debugPrint("Erreur searchUsersByPrefix: $e");
       return [];
     }
+  }
+
+  /// Écoute en temps réel les défis directs entrants (pour notification in-app)
+  Stream<List<DuelRecord>> watchIncomingDirectChallenges(String currentUid) {
+    return _db
+        .collection('duels')
+        .where('targetUid', isEqualTo: currentUid)
+        .where('status', isEqualTo: 'waiting')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => DuelRecord.fromMap(doc.data(), doc.id)).toList());
   }
 
   // --- DEBUG & TESTS ---
