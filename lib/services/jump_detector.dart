@@ -46,6 +46,7 @@ class JumpDetector {
   bool _lastPoseValid = false;
 
   double? get lastCogY => _lastCogY;
+  double? get lastBustHeight => _lastBustHeight;
   bool get lastPoseValid => _lastPoseValid;
 
   /// Calcule le centre de gravité vertical à partir des landmarks disponibles.
@@ -80,7 +81,9 @@ class JumpDetector {
     final rightShoulder = pose.landmarks[PoseLandmarkType.rightShoulder];
 
     if (leftHip == null || rightHip == null ||
-        leftShoulder == null || rightShoulder == null) return null;
+        leftShoulder == null || rightShoulder == null) {
+      return null;
+    }
 
     final hipY = (leftHip.y + rightHip.y) / 2;
     final shoulderY = (leftShoulder.y + rightShoulder.y) / 2;
